@@ -1,3 +1,6 @@
 .vscode
 project/__pycache__
 tests/__pycache__
+.idea
+venv
+__pycache__
