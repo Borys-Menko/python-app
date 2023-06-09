@@ -1,21 +1,21 @@
 from flask import Flask
 
-from .extensions import db, login_manager
-from .models import User
-from .routes import main
+from flask_redis import FlaskRedis
 
 
-def create_app(database_uri="sqlite:///db.sqlite3"):
+# https://github.com/underyx/flask-redis/
+redis_client = FlaskRedis()
+
+
+def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
-    app.config["SECRET_KEY"] = "FesC9cBSuxakv9yN0vBY"
 
-    db.init_app(app)
-    login_manager.init_app(app)
+    redis_client = FlaskRedis()
+    redis_client.init_app(app)
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(user_id)
+    app.extensions['redis_client'] = redis_client
 
+    from project.routes import main
     app.register_blueprint(main)
+
     return app
